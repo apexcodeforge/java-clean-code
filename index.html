@@ -1,0 +1,881 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Java Clean Code Principles — 2026 Edition</title>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&family=Source+Serif+4:ital,wght@0,400;0,600;0,700;1,400&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0F1117;
+    --bg-surface: #161822;
+    --bg-code: #1C1F2E;
+    --bg-code-header: #252840;
+    --border: #2A2D3E;
+    --border-accent: #3B5BDB;
+    --text: #C9CDD8;
+    --text-bright: #E8EBF0;
+    --text-muted: #6B7089;
+    --accent: #5C7CFA;
+    --accent-bright: #748FFC;
+    --accent-glow: rgba(92, 124, 250, 0.08);
+    --green: #69DB7C;
+    --red: #FF6B6B;
+    --orange: #FFA94D;
+    --yellow: #FFD43B;
+    --purple: #B197FC;
+    --cyan: #66D9E8;
+    --code-keyword: #C792EA;
+    --code-string: #C3E88D;
+    --code-comment: #546E7A;
+    --code-function: #82AAFF;
+    --code-type: #FFCB6B;
+    --code-number: #F78C6C;
+    --code-annotation: #FFD54F;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.7;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .page {
+    max-width: 820px;
+    margin: 0 auto;
+    padding: 80px 40px 120px;
+  }
+
+  /* Header */
+  .hero {
+    margin-bottom: 72px;
+    padding-bottom: 48px;
+    border-bottom: 1px solid var(--border);
+  }
+  .hero-tag {
+    display: inline-block;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: var(--accent-bright);
+    background: var(--accent-glow);
+    border: 1px solid rgba(92, 124, 250, 0.2);
+    padding: 5px 14px;
+    border-radius: 4px;
+    margin-bottom: 24px;
+  }
+  .hero h1 {
+    font-family: 'Source Serif 4', serif;
+    font-size: 48px;
+    font-weight: 700;
+    color: var(--text-bright);
+    line-height: 1.15;
+    margin-bottom: 16px;
+    letter-spacing: -0.5px;
+  }
+  .hero .subtitle {
+    font-size: 18px;
+    color: var(--text-muted);
+    line-height: 1.6;
+    max-width: 640px;
+  }
+
+  /* Section headings */
+  h2 {
+    font-family: 'Source Serif 4', serif;
+    font-size: 30px;
+    font-weight: 700;
+    color: var(--text-bright);
+    margin: 72px 0 16px;
+    padding-top: 32px;
+    letter-spacing: -0.3px;
+    display: flex;
+    align-items: baseline;
+    gap: 14px;
+  }
+  h2 .num {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--accent);
+    background: var(--accent-glow);
+    border: 1px solid rgba(92, 124, 250, 0.2);
+    padding: 3px 10px;
+    border-radius: 4px;
+    position: relative;
+    top: -2px;
+  }
+
+  h3 {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 17px;
+    font-weight: 600;
+    color: var(--text-bright);
+    margin: 32px 0 12px;
+  }
+
+  p {
+    margin-bottom: 16px;
+    font-size: 15.5px;
+  }
+
+  strong { color: var(--text-bright); font-weight: 600; }
+  em { color: var(--text); font-style: italic; font-family: 'Source Serif 4', serif; }
+
+  /* Code blocks */
+  .code-block {
+    background: var(--bg-code);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    margin: 16px 0 24px;
+    overflow: hidden;
+  }
+  .code-header {
+    background: var(--bg-code-header);
+    padding: 8px 16px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: var(--text-muted);
+    letter-spacing: 0.5px;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .code-header .dot { width: 8px; height: 8px; border-radius: 50%; }
+  .code-header .dot.r { background: #FF5F56; }
+  .code-header .dot.y { background: #FFBD2E; }
+  .code-header .dot.g { background: #27C93F; }
+  pre {
+    padding: 20px 24px;
+    overflow-x: auto;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 13.5px;
+    line-height: 1.65;
+    color: #A6ACCD;
+  }
+  pre code { background: none; padding: 0; font-size: inherit; }
+
+  /* Syntax colors */
+  .kw { color: var(--code-keyword); }
+  .str { color: var(--code-string); }
+  .cmt { color: var(--code-comment); font-style: italic; }
+  .fn { color: var(--code-function); }
+  .tp { color: var(--code-type); }
+  .nb { color: var(--code-number); }
+  .an { color: var(--code-annotation); }
+
+  /* Inline code */
+  code {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 13px;
+    background: var(--bg-code);
+    border: 1px solid var(--border);
+    padding: 2px 7px;
+    border-radius: 4px;
+    color: var(--accent-bright);
+  }
+
+  /* Bullets */
+  ul {
+    list-style: none;
+    margin: 12px 0 20px;
+    padding: 0;
+  }
+  ul li {
+    position: relative;
+    padding-left: 24px;
+    margin-bottom: 8px;
+    font-size: 15.5px;
+  }
+  ul li::before {
+    content: '›';
+    position: absolute;
+    left: 4px;
+    color: var(--accent);
+    font-weight: 700;
+    font-size: 18px;
+    line-height: 1.6;
+  }
+
+  /* Callout */
+  .callout {
+    background: var(--accent-glow);
+    border-left: 3px solid var(--accent);
+    padding: 16px 20px;
+    border-radius: 0 6px 6px 0;
+    margin: 20px 0;
+    font-size: 15px;
+  }
+  .callout strong { color: var(--accent-bright); }
+
+  /* Divider */
+  .divider {
+    height: 1px;
+    background: var(--border);
+    margin: 56px 0 0;
+  }
+
+  /* Quick ref table */
+  .ref-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 24px 0;
+    font-size: 14px;
+  }
+  .ref-table th {
+    text-align: left;
+    font-weight: 600;
+    color: var(--accent-bright);
+    background: var(--bg-code-header);
+    padding: 12px 16px;
+    border: 1px solid var(--border);
+    font-size: 12px;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+  }
+  .ref-table td {
+    padding: 10px 16px;
+    border: 1px solid var(--border);
+    vertical-align: top;
+  }
+  .ref-table td:first-child {
+    font-weight: 600;
+    color: var(--text-bright);
+    white-space: nowrap;
+    width: 160px;
+  }
+  .ref-table tr:nth-child(even) td { background: var(--bg-surface); }
+
+  /* Smooth scroll */
+  html { scroll-behavior: smooth; }
+
+  /* TOC */
+  .toc {
+    background: var(--bg-surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 28px 32px;
+    margin: 36px 0 16px;
+  }
+  .toc-title {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    margin-bottom: 16px;
+  }
+  .toc a {
+    color: var(--text);
+    text-decoration: none;
+    font-size: 14.5px;
+    display: block;
+    padding: 5px 0;
+    transition: color 0.15s;
+  }
+  .toc a:hover { color: var(--accent-bright); }
+  .toc a .toc-num {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    color: var(--accent);
+    margin-right: 10px;
+  }
+
+  @media (max-width: 700px) {
+    .page { padding: 48px 20px 80px; }
+    .hero h1 { font-size: 32px; }
+    h2 { font-size: 24px; }
+    pre { font-size: 12px; padding: 16px; }
+  }
+</style>
+</head>
+<body>
+<div class="page">
+
+  <!-- Hero -->
+  <div class="hero">
+    <div class="hero-tag">Developer Guide</div>
+    <h1>Java Clean Code Principles</h1>
+    <p class="subtitle">A practical guide to writing clean, maintainable Java — covering foundational practices and modern Java features. 2026 Edition.</p>
+  </div>
+
+  <!-- TOC -->
+  <div class="toc">
+    <div class="toc-title">Contents</div>
+    <a href="#s1"><span class="toc-num">01</span>Naming: Be Precise, Follow Conventions</a>
+    <a href="#s2"><span class="toc-num">02</span>Short Methods &amp; Single Responsibility</a>
+    <a href="#s3"><span class="toc-num">03</span>Comments: Explain Why, Not What</a>
+    <a href="#s4"><span class="toc-num">04</span>Eliminate Magic Numbers and Strings</a>
+    <a href="#s5"><span class="toc-num">05</span>Exception Handling: Be Specific, Fail Fast</a>
+    <a href="#s6"><span class="toc-num">06</span>Streams &amp; Lambdas: Readable Over Clever</a>
+    <a href="#s7"><span class="toc-num">07</span>Testing: Untested Code Isn't Clean Code</a>
+    <a href="#s8"><span class="toc-num">08</span>Simplicity Over Cleverness (YAGNI)</a>
+    <a href="#s9"><span class="toc-num">09</span>Dependency Injection &amp; Composition</a>
+    <a href="#s10"><span class="toc-num">10</span>Refactor Continuously (With Tests)</a>
+    <a href="#s11"><span class="toc-num">11</span>Embrace Modern Java Features</a>
+    <a href="#s12"><span class="toc-num">12</span>Immutability by Default</a>
+    <a href="#s13"><span class="toc-num">13</span>Optional: Use Idiomatically</a>
+    <a href="#s14"><span class="toc-num">14</span>Structured Logging Over System.out</a>
+    <a href="#s15"><span class="toc-num">15</span>Null Safety Strategy</a>
+    <a href="#ref"><span class="toc-num">++</span>Quick Reference Table</a>
+  </div>
+
+  <!-- 1 -->
+  <div class="divider"></div>
+  <h2 id="s1"><span class="num">01</span>Naming: Be Precise, Not Just Descriptive</h2>
+  <p>Consistent, descriptive naming is foundational. But the real trap isn't cryptic abbreviations — it's names that <em>seem</em> descriptive but are actually vague.</p>
+
+  <h3>Avoid vague "manager" and "data" names</h3>
+  <div class="code-block">
+    <div class="code-header"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span>Java</div>
+    <pre><code><span class="cmt">// Bad — what does "process" mean? What "data"?</span>
+<span class="kw">public class</span> <span class="tp">DataManager</span> {
+    <span class="kw">public void</span> <span class="fn">processData</span>(<span class="tp">List</span>&lt;<span class="tp">String</span>&gt; data) { ... }
+}
+
+<span class="cmt">// Good — says exactly what it does</span>
+<span class="kw">public class</span> <span class="tp">InvoiceExporter</span> {
+    <span class="kw">public void</span> <span class="fn">exportToCsv</span>(<span class="tp">List</span>&lt;<span class="tp">Invoice</span>&gt; invoices) { ... }
+}</code></pre>
+  </div>
+
+  <h3>Booleans should read like a yes/no question</h3>
+  <div class="code-block">
+    <div class="code-header"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span>Java</div>
+    <pre><code><span class="cmt">// Bad</span>
+<span class="kw">boolean</span> status;
+<span class="kw">boolean</span> flag;
+
+<span class="cmt">// Good</span>
+<span class="kw">boolean</span> isActive;
+<span class="kw">boolean</span> hasExpired;
+<span class="kw">boolean</span> canRetry;</code></pre>
+  </div>
+
+  <h3>Avoid abbreviations unless universally understood</h3>
+  <div class="code-block">
+    <div class="code-header"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span>Java</div>
+    <pre><code><span class="cmt">// Bad</span>
+<span class="kw">int</span> empCnt;
+<span class="tp">String</span> txnId;
+
+<span class="cmt">// Good</span>
+<span class="kw">int</span> employeeCount;
+<span class="tp">String</span> transactionId;</code></pre>
+  </div>
+
+  <h3>Java naming conventions (camelCase &amp; friends)</h3>
+  <p>Java has well-established casing rules. Breaking them confuses every developer who reads your code and breaks IDE tooling.</p>
+  <div class="code-block">
+    <div class="code-header"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span>Java — Naming Conventions</div>
+    <pre><code><span class="cmt">// Classes & interfaces — PascalCase (UpperCamelCase)</span>
+<span class="kw">public class</span> <span class="tp">OrderService</span> { }
+<span class="kw">public interface</span> <span class="tp">PaymentGateway</span> { }
+<span class="kw">public record</span> <span class="tp">TradeExecution</span>(...) { }
+<span class="kw">public sealed interface</span> <span class="tp">TradeResult</span> { }
+
+<span class="cmt">// Methods & variables — camelCase (lowerCamelCase)</span>
+<span class="kw">public void</span> <span class="fn">calculateTotalPrice</span>() { }
+<span class="kw">int</span> itemCount = <span class="nb">0</span>;
+<span class="tp">String</span> customerEmail;
+
+<span class="cmt">// Constants — SCREAMING_SNAKE_CASE</span>
+<span class="kw">private static final int</span> MAX_RETRY_COUNT = <span class="nb">3</span>;
+<span class="kw">private static final</span> <span class="tp">String</span> DEFAULT_CURRENCY = <span class="str">"USD"</span>;
+
+<span class="cmt">// Packages — all lowercase, no underscores</span>
+<span class="cmt">// com.helcik.invoice.service</span>
+<span class="cmt">// com.helcik.trade.execution</span>
+
+<span class="cmt">// Enums — PascalCase type, SCREAMING_SNAKE_CASE values</span>
+<span class="kw">public enum</span> <span class="tp">OrderStatus</span> {
+    PENDING, PROCESSING, COMPLETED, CANCELLED
+}
+
+<span class="cmt">// Type parameters — single uppercase letter (or short word)</span>
+<span class="kw">public class</span> <span class="tp">Repository</span>&lt;<span class="tp">T</span>, <span class="tp">ID</span>&gt; { }
+<span class="kw">public interface</span> <span class="tp">Converter</span>&lt;<span class="tp">S</span>, <span class="tp">T</span>&gt; { }</code></pre>
+  </div>
+
+  <h3>Common naming pitfalls</h3>
+  <ul>
+    <li><strong>Inconsistent acronyms</strong> — use <code>HttpClient</code> and <code>parseJson</code>, not <code>HTTPClient</code> or <code>parseJSON</code>. Treat acronyms as words in camelCase.</li>
+    <li><strong>Hungarian notation</strong> — don't prefix types like <code>strName</code> or <code>iCount</code>. The type system already tells you this.</li>
+    <li><strong>Meaningless suffixes</strong> — <code>UserData</code>, <code>UserInfo</code>, <code>UserObject</code> all say the same thing. Pick one and be consistent.</li>
+    <li><strong>Verb vs noun confusion</strong> — classes are nouns (<code>InvoiceExporter</code>), methods are verbs (<code>exportInvoice</code>). Don't name a class <code>ExportInvoices</code> or a method <code>invoice</code>.</li>
+  </ul>
+
+  <div class="callout">
+    <strong>Rule of thumb:</strong> If you have to read the method body to understand what a name means, the name is wrong. Good names make the code read like a story — <code>orderService.validateAndSubmit(order)</code> tells you everything without opening the file.
+  </div>
+
+  <!-- 2 -->
+  <div class="divider"></div>
+  <h2 id="s2"><span class="num">02</span>Short Methods &amp; Single Responsibility</h2>
+  <p>Every method should do one thing. If it doesn't fit on your screen (~20–25 lines), it's probably doing too much.</p>
+
+  <h3>Before — one method doing three jobs</h3>
+  <div class="code-block">
+    <div class="code-header"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span>Java</div>
+    <pre><code><span class="kw">public void</span> <span class="fn">handleOrder</span>(<span class="tp">Order</span> order) {
+    <span class="kw">if</span> (order == <span class="kw">null</span> || order.<span class="fn">getItems</span>().<span class="fn">isEmpty</span>()) {
+        <span class="kw">throw new</span> <span class="tp">IllegalArgumentException</span>(<span class="str">"Invalid order"</span>);
+    }
+    <span class="kw">double</span> total = <span class="nb">0</span>;
+    <span class="kw">for</span> (<span class="tp">Item</span> item : order.<span class="fn">getItems</span>()) {
+        total += item.<span class="fn">getPrice</span>() * item.<span class="fn">getQuantity</span>();
+    }
+    <span class="kw">if</span> (order.<span class="fn">getCustomer</span>().<span class="fn">isPremium</span>()) {
+        total *= <span class="nb">0.9</span>;
+    }
+    paymentService.<span class="fn">processPayment</span>(
+        <span class="kw">new</span> <span class="tp">Payment</span>(order.<span class="fn">getCustomer</span>(), total));
+}</code></pre>
+  </div>
+
+  <h3>After — each concern is isolated and testable</h3>
+  <div class="code-block">
+    <div class="code-header"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span>Java</div>
+    <pre><code><span class="kw">public void</span> <span class="fn">handleOrder</span>(<span class="tp">Order</span> order) {
+    <span class="fn">validateOrder</span>(order);
+    <span class="kw">double</span> total = <span class="fn">calculateOrderTotal</span>(order);
+    <span class="fn">executePayment</span>(order.<span class="fn">getCustomer</span>(), total);
+}</code></pre>
+  </div>
+
+  <!-- 3 -->
+  <div class="divider"></div>
+  <h2 id="s3"><span class="num">03</span>Comments: Explain <em>Why</em>, Not <em>What</em></h2>
+  <p>If you need a comment to explain what code does, that's a signal to rename or extract a method. Reserve comments for things code structurally <em>cannot</em> express.</p>
+
+  <h3>Comments that should be refactored away</h3>
+  <div class="code-block">
+    <div class="code-header"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span>Java</div>
+    <pre><code><span class="cmt">// Bad — the comment IS the method name you should have written</span>
+<span class="cmt">// Check if the user is eligible for a discount</span>
+<span class="kw">if</span> (user.<span class="fn">getAge</span>() > <span class="nb">18</span> && user.<span class="fn">getOrders</span>().<span class="fn">size</span>() > <span class="nb">5</span>
+    && user.<span class="fn">isPremiumMember</span>()) {
+    <span class="fn">applyDiscount</span>(order);
+}
+
+<span class="cmt">// Good — extract the condition</span>
+<span class="kw">if</span> (user.<span class="fn">isEligibleForDiscount</span>()) {
+    <span class="fn">applyDiscount</span>(order);
+}</code></pre>
+  </div>
+
+  <h3>Comments that ARE valuable — explaining <em>why</em></h3>
+  <div class="code-block">
+    <div class="code-header"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span>Java — Business context</div>
+    <pre><code><span class="cmt">// FX rates from the ECB feed are delayed by ~15 minutes,</span>
+<span class="cmt">// so we add a buffer margin to protect against stale quotes</span>
+<span class="kw">private static final double</span> FX_RATE_BUFFER = <span class="nb">0.02</span>;</code></pre>
+  </div>
+  <div class="code-block">
+    <div class="code-header"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span>Java — Non-obvious constraint</div>
+    <pre><code><span class="cmt">// The payment gateway rejects amounts below 0.50 USD</span>
+<span class="cmt">// due to processing fees, so we bundle micro-transactions</span>
+<span class="kw">if</span> (pendingAmount < MINIMUM_CHARGE_THRESHOLD) {
+    batchQueue.<span class="fn">add</span>(transaction);
+    <span class="kw">return</span>;
+}</code></pre>
+  </div>
+  <div class="code-block">
+    <div class="code-header"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span>Java — Deliberate tradeoff</div>
+    <pre><code><span class="cmt">// ArrayList over LinkedList: profiling showed cache locality</span>
+<span class="cmt">// gives 3x throughput on typical datasets (&lt; 10k elements)</span>
+<span class="kw">private final</span> <span class="tp">List</span>&lt;<span class="tp">Trade</span>&gt; activeTrades = <span class="kw">new</span> <span class="tp">ArrayList</span>&lt;&gt;();</code></pre>
+  </div>
+
+  <h3>Records as self-documenting code</h3>
+  <div class="code-block">
+    <div class="code-header"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span>Java 16+</div>
+    <pre><code><span class="cmt">// 40+ lines of POJO boilerplate becomes:</span>
+<span class="kw">public record</span> <span class="tp">DiscountResult</span>(
+    <span class="kw">double</span> originalPrice,
+    <span class="kw">double</span> discountRate,
+    <span class="kw">double</span> finalPrice
+) {}</code></pre>
+  </div>
+
+  <div class="callout">
+    <strong>Rule of thumb:</strong> Before writing a comment, ask: <em>"Can I rename something, extract a method, or restructure the code so this comment becomes redundant?"</em> If yes, do that. Comments are for: business context, external constraints, historical reasons, and performance justifications.
+  </div>
+
+  <!-- 4 -->
+  <div class="divider"></div>
+  <h2 id="s4"><span class="num">04</span>Eliminate Magic Numbers and Strings</h2>
+  <p>Unnamed constants make code unreadable and fragile. Use named constants, enums, or sealed interfaces.</p>
+  <div class="code-block">
+    <div class="code-header"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span>Java</div>
+    <pre><code><span class="cmt">// Bad — what does 0.1 represent?</span>
+<span class="kw">return</span> price * <span class="nb">0.1</span>;
+
+<span class="cmt">// Good — named constant</span>
+<span class="kw">private static final double</span> STANDARD_DISCOUNT_RATE = <span class="nb">0.10</span>;
+<span class="kw">return</span> price * STANDARD_DISCOUNT_RATE;</code></pre>
+  </div>
+
+  <h3>Sealed interfaces when behavior varies per type</h3>
+  <div class="code-block">
+    <div class="code-header"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span>Java 17+</div>
+    <pre><code><span class="kw">public sealed interface</span> <span class="tp">PaymentMethod</span>
+    <span class="kw">permits</span> <span class="tp">CreditCard</span>, <span class="tp">BankTransfer</span>, <span class="tp">Crypto</span> {
+    <span class="tp">BigDecimal</span> <span class="fn">calculateFee</span>(<span class="tp">BigDecimal</span> amount);
+}
+
+<span class="kw">public record</span> <span class="tp">CreditCard</span>(<span class="tp">String</span> last4)
+    <span class="kw">implements</span> <span class="tp">PaymentMethod</span> {
+    <span class="kw">public</span> <span class="tp">BigDecimal</span> <span class="fn">calculateFee</span>(<span class="tp">BigDecimal</span> amount) {
+        <span class="kw">return</span> amount.<span class="fn">multiply</span>(<span class="kw">new</span> <span class="tp">BigDecimal</span>(<span class="str">"0.029"</span>));
+    }
+}</code></pre>
+  </div>
+
+  <!-- 5 -->
+  <div class="divider"></div>
+  <h2 id="s5"><span class="num">05</span>Exception Handling: Be Specific, Fail Fast</h2>
+  <p>Catch specific exceptions. Never catch generic <code>Exception</code>. Provide context that helps debugging.</p>
+  <div class="code-block">
+    <div class="code-header"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span>Java</div>
+    <pre><code><span class="cmt">// Bad — swallows everything</span>
+<span class="kw">try</span> { userService.<span class="fn">registerUser</span>(user); }
+<span class="kw">catch</span> (<span class="tp">Exception</span> e) {
+    <span class="tp">System</span>.out.<span class="fn">println</span>(<span class="str">"An error occurred."</span>);
+}
+
+<span class="cmt">// Good — specific catches</span>
+<span class="kw">try</span> {
+    userService.<span class="fn">registerUser</span>(user);
+} <span class="kw">catch</span> (<span class="tp">UserAlreadyExistsException</span> e) {
+    log.<span class="fn">warn</span>(<span class="str">"Duplicate registration: {}"</span>,
+        user.<span class="fn">getEmail</span>());
+    <span class="kw">return</span> <span class="tp">ResponseEntity</span>.<span class="fn">conflict</span>()
+        .<span class="fn">body</span>(<span class="str">"User already exists"</span>);
+} <span class="kw">catch</span> (<span class="tp">DatabaseConnectionException</span> e) {
+    log.<span class="fn">error</span>(<span class="str">"DB failure: {}"</span>, e.<span class="fn">getMessage</span>(), e);
+    <span class="kw">throw new</span> <span class="tp">ServiceUnavailableException</span>(
+        <span class="str">"Cannot process request"</span>, e);
+}</code></pre>
+  </div>
+  <ul>
+    <li>Always use <code>try-with-resources</code> for <code>Closeable</code>/<code>AutoCloseable</code> resources</li>
+    <li>In Spring Boot, centralize with <code>@ControllerAdvice</code></li>
+    <li>Never use exceptions for control flow</li>
+    <li>Fail fast — validate inputs at the boundary, not deep in the call stack</li>
+  </ul>
+
+  <!-- 6 -->
+  <div class="divider"></div>
+  <h2 id="s6"><span class="num">06</span>Streams &amp; Lambdas: Readable Over Clever</h2>
+  <p>Method references are preferred for simple mappings. Break complex chains into named predicates.</p>
+  <div class="code-block">
+    <div class="code-header"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span>Java</div>
+    <pre><code><span class="cmt">// Clean and readable</span>
+<span class="tp">List</span>&lt;<span class="tp">String</span>&gt; activeUserNames = users.<span class="fn">stream</span>()
+    .<span class="fn">filter</span>(<span class="tp">User</span>::isEnabled)
+    .<span class="fn">map</span>(<span class="tp">User</span>::getName)
+    .<span class="fn">sorted</span>()
+    .<span class="fn">toList</span>(); <span class="cmt">// Java 16+ preferred</span>
+
+<span class="cmt">// Complex logic — extract predicates</span>
+<span class="tp">Predicate</span>&lt;<span class="tp">Order</span>&gt; isHighValueCompleted = order ->
+    order.<span class="fn">getStatus</span>() == COMPLETED
+    && order.<span class="fn">getTotal</span>().<span class="fn">compareTo</span>(threshold) > <span class="nb">0</span>;
+
+<span class="kw">var</span> result = orders.<span class="fn">stream</span>()
+    .<span class="fn">filter</span>(isHighValueCompleted)
+    .<span class="fn">flatMap</span>(order -> order.<span class="fn">getItems</span>().<span class="fn">stream</span>())
+    .<span class="fn">toList</span>();</code></pre>
+  </div>
+  <div class="callout">
+    <strong>When NOT to use streams:</strong> If you need indexes, early <code>break</code>, mutable accumulators, or checked exceptions — a <code>for</code> loop is cleaner.
+  </div>
+
+  <!-- 7 -->
+  <div class="divider"></div>
+  <h2 id="s7"><span class="num">07</span>Testing: Untested Code Isn't Clean Code</h2>
+  <p>Tests are not a separate concern from clean code — they enable it. You can't safely refactor without them.</p>
+  <div class="code-block">
+    <div class="code-header"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span>Java — JUnit 5 + AssertJ</div>
+    <pre><code><span class="an">@Test</span>
+<span class="an">@DisplayName</span>(<span class="str">"Should apply 10% discount for premium"</span>)
+<span class="kw">void</span> <span class="fn">shouldApply10PercentDiscount_whenPremium</span>() {
+    <span class="kw">var</span> calc = <span class="kw">new</span> <span class="tp">DiscountCalculator</span>();
+    <span class="kw">double</span> result = calc.<span class="fn">computeDiscount</span>(<span class="nb">100.0</span>, <span class="nb">0.10</span>);
+    <span class="fn">assertThat</span>(result).<span class="fn">isCloseTo</span>(<span class="nb">10.0</span>, <span class="fn">within</span>(<span class="nb">0.001</span>));
+}
+
+<span class="an">@ParameterizedTest</span>
+<span class="an">@CsvSource</span>({
+    <span class="str">"100.0, 0.10, 10.0"</span>,
+    <span class="str">"50.0,  0.00, 0.0"</span>,
+    <span class="str">"200.0, 0.25, 50.0"</span>
+})
+<span class="kw">void</span> <span class="fn">shouldComputeDiscountCorrectly</span>(
+    <span class="kw">double</span> price, <span class="kw">double</span> rate, <span class="kw">double</span> expected) {
+    <span class="fn">assertThat</span>(calc.<span class="fn">computeDiscount</span>(price, rate))
+        .<span class="fn">isCloseTo</span>(expected, <span class="fn">within</span>(<span class="nb">0.001</span>));
+}</code></pre>
+  </div>
+
+  <h3>Follow Arrange-Act-Assert</h3>
+  <div class="code-block">
+    <div class="code-header"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span>Java</div>
+    <pre><code><span class="an">@Test</span>
+<span class="kw">void</span> <span class="fn">shouldRejectExpiredCoupon</span>() {
+    <span class="cmt">// Arrange</span>
+    <span class="kw">var</span> coupon = <span class="kw">new</span> <span class="tp">Coupon</span>(<span class="str">"SAVE10"</span>,
+        <span class="tp">LocalDate</span>.<span class="fn">of</span>(<span class="nb">2025</span>, <span class="nb">1</span>, <span class="nb">1</span>));
+    <span class="kw">var</span> order = <span class="kw">new</span> <span class="tp">Order</span>(<span class="tp">BigDecimal</span>.<span class="fn">valueOf</span>(<span class="nb">100</span>));
+
+    <span class="cmt">// Act & Assert</span>
+    <span class="fn">assertThatThrownBy</span>(() -> order.<span class="fn">applyCoupon</span>(coupon))
+        .<span class="fn">isInstanceOf</span>(<span class="tp">ExpiredCouponException</span>.<span class="kw">class</span>)
+        .<span class="fn">hasMessageContaining</span>(<span class="str">"SAVE10"</span>);
+}</code></pre>
+  </div>
+
+  <!-- 8 -->
+  <div class="divider"></div>
+  <h2 id="s8"><span class="num">08</span>Simplicity Over Cleverness (YAGNI)</h2>
+  <p>Don't build abstractions you don't need yet. Extract an abstraction when you have <strong>three</strong> concrete cases, not before.</p>
+  <ul>
+    <li>Creating <code>AbstractDiscountStrategyFactory</code> when you have one discount type</li>
+    <li>Building a plugin system when you have two implementations</li>
+    <li>Using the Strategy pattern for a two-branch <code>if</code>/<code>else</code></li>
+  </ul>
+
+  <!-- 9 -->
+  <div class="divider"></div>
+  <h2 id="s9"><span class="num">09</span>Dependency Injection &amp; Composition</h2>
+  <p>Inject dependencies through constructors. Code to interfaces. Prefer composition over inheritance.</p>
+  <div class="code-block">
+    <div class="code-header"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span>Java</div>
+    <pre><code><span class="cmt">// Bad — tight coupling, untestable</span>
+<span class="kw">public class</span> <span class="tp">OrderService</span> {
+    <span class="kw">private</span> <span class="tp">PaymentService</span> ps = <span class="kw">new</span> <span class="tp">PaymentService</span>();
+}
+
+<span class="cmt">// Good — injectable, testable, swappable</span>
+<span class="kw">public class</span> <span class="tp">OrderService</span> {
+    <span class="kw">private final</span> <span class="tp">PaymentGateway</span> paymentGateway;
+
+    <span class="kw">public</span> <span class="fn">OrderService</span>(<span class="tp">PaymentGateway</span> paymentGateway) {
+        <span class="kw">this</span>.paymentGateway = paymentGateway;
+    }
+}</code></pre>
+  </div>
+  <div class="callout">
+    <strong>Note:</strong> Since Spring 4.3+, single-constructor classes don't need <code>@Autowired</code>. The principle applies even without Spring.
+  </div>
+
+  <h3>Composition over inheritance</h3>
+  <div class="code-block">
+    <div class="code-header"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span>Java</div>
+    <pre><code><span class="kw">interface</span> <span class="tp">Flyer</span> { <span class="kw">default void</span> <span class="fn">fly</span>() { <span class="cmt">/* ... */</span> } }
+<span class="kw">interface</span> <span class="tp">Swimmer</span> { <span class="kw">default void</span> <span class="fn">swim</span>() { <span class="cmt">/* ... */</span> } }
+
+<span class="kw">class</span> <span class="tp">Duck</span> <span class="kw">implements</span> <span class="tp">Flyer</span>, <span class="tp">Swimmer</span> { }</code></pre>
+  </div>
+
+  <!-- 10 -->
+  <div class="divider"></div>
+  <h2 id="s10"><span class="num">10</span>Refactor Continuously (With Tests)</h2>
+  <p>Refactoring without tests is just moving code around and hoping. The cycle is: write tests → refactor → verify tests still pass.</p>
+  <ul>
+    <li><strong>Extract Method</strong> — pull a block into a named method</li>
+    <li><strong>Introduce Parameter Object</strong> — replace 3+ related parameters with a record</li>
+    <li><strong>Replace conditional with polymorphism</strong> — sealed interfaces + pattern matching</li>
+    <li><strong>Inline trivial methods</strong> — if a method just delegates, remove the indirection</li>
+  </ul>
+
+  <!-- 11 -->
+  <div class="divider"></div>
+  <h2 id="s11"><span class="num">11</span>Embrace Modern Java Features</h2>
+  <p>These aren't optional syntax sugar — they eliminate entire categories of code smells.</p>
+
+  <h3>Records (Java 16+)</h3>
+  <div class="code-block">
+    <div class="code-header"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span>Java 16+</div>
+    <pre><code><span class="kw">public record</span> <span class="tp">TradeExecution</span>(
+    <span class="tp">String</span> symbol,
+    <span class="tp">BigDecimal</span> price,
+    <span class="kw">int</span> quantity,
+    <span class="tp">Instant</span> executedAt
+) {
+    <span class="kw">public</span> <span class="tp">TradeExecution</span> {
+        <span class="tp">Objects</span>.<span class="fn">requireNonNull</span>(symbol);
+        <span class="kw">if</span> (quantity <= <span class="nb">0</span>)
+            <span class="kw">throw new</span> <span class="tp">IllegalArgumentException</span>(
+                <span class="str">"Quantity must be positive"</span>);
+    }
+}</code></pre>
+  </div>
+
+  <h3>Sealed Classes (Java 17+)</h3>
+  <div class="code-block">
+    <div class="code-header"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span>Java 17+</div>
+    <pre><code><span class="kw">public sealed interface</span> <span class="tp">TradeResult</span>
+    <span class="kw">permits</span> <span class="tp">Success</span>, <span class="tp">Failure</span>, <span class="tp">Pending</span> {
+    <span class="kw">record</span> <span class="tp">Success</span>(<span class="tp">TradeExecution</span> exec)
+        <span class="kw">implements</span> <span class="tp">TradeResult</span> {}
+    <span class="kw">record</span> <span class="tp">Failure</span>(<span class="tp">String</span> reason, <span class="tp">Exception</span> cause)
+        <span class="kw">implements</span> <span class="tp">TradeResult</span> {}
+    <span class="kw">record</span> <span class="tp">Pending</span>(<span class="tp">String</span> orderId)
+        <span class="kw">implements</span> <span class="tp">TradeResult</span> {}
+}</code></pre>
+  </div>
+
+  <h3>Pattern Matching in Switch (Java 21+)</h3>
+  <div class="code-block">
+    <div class="code-header"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span>Java 21+</div>
+    <pre><code><span class="kw">public</span> <span class="tp">String</span> <span class="fn">describe</span>(<span class="tp">TradeResult</span> result) {
+    <span class="kw">return switch</span> (result) {
+        <span class="kw">case</span> <span class="tp">Success</span> s -> <span class="str">"Executed %s shares of %s"</span>
+            .<span class="fn">formatted</span>(s.<span class="fn">exec</span>().<span class="fn">quantity</span>(),
+                       s.<span class="fn">exec</span>().<span class="fn">symbol</span>());
+        <span class="kw">case</span> <span class="tp">Failure</span> f -> <span class="str">"Failed: "</span> + f.<span class="fn">reason</span>();
+        <span class="kw">case</span> <span class="tp">Pending</span> p -> <span class="str">"Pending: "</span> + p.<span class="fn">orderId</span>();
+    };
+}</code></pre>
+  </div>
+
+  <h3>Text Blocks (Java 15+)</h3>
+  <div class="code-block">
+    <div class="code-header"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span>Java 15+</div>
+    <pre><code><span class="tp">String</span> query = <span class="str">"""
+    SELECT symbol, price, quantity
+    FROM trades
+    WHERE executed_at > :since
+      AND status = 'COMPLETED'
+    ORDER BY executed_at DESC
+    """</span>;</code></pre>
+  </div>
+
+  <!-- 12 -->
+  <div class="divider"></div>
+  <h2 id="s12"><span class="num">12</span>Immutability by Default</h2>
+  <p>Mutable state is the root of countless bugs. Default to immutable and opt into mutability only when needed.</p>
+  <div class="code-block">
+    <div class="code-header"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span>Java</div>
+    <pre><code><span class="cmt">// Use records for data</span>
+<span class="kw">public record</span> <span class="tp">Money</span>(<span class="tp">BigDecimal</span> amount, <span class="tp">Currency</span> currency) {}
+
+<span class="cmt">// Use unmodifiable collections</span>
+<span class="tp">List</span>&lt;<span class="tp">String</span>&gt; symbols = <span class="tp">List</span>.<span class="fn">of</span>(<span class="str">"AAPL"</span>, <span class="str">"GOOG"</span>, <span class="str">"MSFT"</span>);
+<span class="tp">Map</span>&lt;<span class="tp">String</span>, <span class="tp">Integer</span>&gt; counts = <span class="tp">Map</span>.<span class="fn">of</span>(
+    <span class="str">"trades"</span>, <span class="nb">42</span>, <span class="str">"errors"</span>, <span class="nb">0</span>);
+
+<span class="cmt">// Mark fields final</span>
+<span class="kw">private final</span> <span class="tp">List</span>&lt;<span class="tp">Order</span>&gt; orders;</code></pre>
+  </div>
+
+  <!-- 13 -->
+  <div class="divider"></div>
+  <h2 id="s13"><span class="num">13</span>Optional: Use Idiomatically</h2>
+  <p><code>Optional</code> is for return types that may have no value. Not for fields, not for parameters.</p>
+  <div class="code-block">
+    <div class="code-header"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span>Java</div>
+    <pre><code><span class="cmt">// Bad — imperative Optional usage</span>
+<span class="tp">Optional</span>&lt;<span class="tp">User</span>&gt; user = <span class="fn">findUser</span>(id);
+<span class="kw">if</span> (user.<span class="fn">isPresent</span>()) {
+    <span class="kw">return</span> user.<span class="fn">get</span>().<span class="fn">getName</span>();
+}
+
+<span class="cmt">// Good — chain operations</span>
+<span class="kw">return</span> <span class="fn">findUser</span>(id)
+    .<span class="fn">map</span>(<span class="tp">User</span>::getName)
+    .<span class="fn">orElse</span>(<span class="str">"Unknown"</span>);
+
+<span class="cmt">// Good — throw when absence is a bug</span>
+<span class="tp">User</span> user = <span class="fn">findUser</span>(id)
+    .<span class="fn">orElseThrow</span>(() ->
+        <span class="kw">new</span> <span class="tp">UserNotFoundException</span>(
+            <span class="str">"No user with id: "</span> + id));
+
+<span class="cmt">// Never do these:</span>
+<span class="kw">private</span> <span class="tp">Optional</span>&lt;<span class="tp">String</span>&gt; name;           <span class="cmt">// field</span>
+<span class="kw">public void</span> <span class="fn">setName</span>(<span class="tp">Optional</span>&lt;<span class="tp">String</span>&gt; n)  <span class="cmt">// param</span></code></pre>
+  </div>
+
+  <!-- 14 -->
+  <div class="divider"></div>
+  <h2 id="s14"><span class="num">14</span>Structured Logging Over System.out</h2>
+  <p><code>System.out.println</code> has no place in production code. Use structured logging with SLF4J.</p>
+  <div class="code-block">
+    <div class="code-header"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span>Java</div>
+    <pre><code><span class="cmt">// Bad</span>
+<span class="tp">System</span>.out.<span class="fn">println</span>(<span class="str">"Order processed!"</span>);
+
+<span class="cmt">// Good — structured, leveled, searchable</span>
+log.<span class="fn">info</span>(<span class="str">"Order processed: orderId={}, total={}"</span>,
+    order.<span class="fn">getId</span>(), total);
+
+log.<span class="fn">error</span>(<span class="str">"Payment failed: orderId={}"</span>,
+    orderId, exception);</code></pre>
+  </div>
+  <p>Use MDC (Mapped Diagnostic Context) for request-scoped context like correlation IDs, user IDs, and session identifiers.</p>
+
+  <!-- 15 -->
+  <div class="divider"></div>
+  <h2 id="s15"><span class="num">15</span>Null Safety Strategy</h2>
+  <p>Design APIs that never return null. Use annotations to make intent explicit.</p>
+  <div class="code-block">
+    <div class="code-header"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span>Java</div>
+    <pre><code><span class="cmt">// Never return null — return empty collections</span>
+<span class="kw">public</span> <span class="an">@NonNull</span> <span class="tp">List</span>&lt;<span class="tp">Trade</span>&gt; <span class="fn">findTrades</span>(
+    <span class="an">@NonNull</span> <span class="tp">String</span> symbol) {
+    <span class="kw">return</span> trades.<span class="fn">getOrDefault</span>(symbol, <span class="tp">List</span>.<span class="fn">of</span>());
+}
+
+<span class="cmt">// Use Optional for genuinely optional values</span>
+<span class="kw">public</span> <span class="tp">Optional</span>&lt;<span class="tp">User</span>&gt; <span class="fn">findByEmail</span>(<span class="tp">String</span> email) {
+    <span class="cmt">// ...</span>
+}
+
+<span class="cmt">// Validate at boundaries</span>
+<span class="kw">public void</span> <span class="fn">createOrder</span>(
+    <span class="an">@NonNull</span> <span class="tp">Customer</span> customer,
+    <span class="an">@NonNull</span> <span class="tp">List</span>&lt;<span class="tp">Item</span>&gt; items) {
+    <span class="tp">Objects</span>.<span class="fn">requireNonNull</span>(customer);
+    <span class="tp">Objects</span>.<span class="fn">requireNonNull</span>(items);
+    <span class="cmt">// safe to proceed without null checks</span>
+}</code></pre>
+  </div>
+
+  <!-- Quick Reference -->
+  <div class="divider"></div>
+  <h2 id="ref"><span class="num">++</span>Quick Reference</h2>
+  <table class="ref-table">
+    <thead>
+      <tr><th>Principle</th><th>One-liner</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>Naming</td><td>Be Precise, Follow Conventions</td></tr>
+      <tr><td>Short methods</td><td>One job, ~20 lines max, testable in isolation</td></tr>
+      <tr><td>Comments</td><td>Explain <em>why</em>, not <em>what</em> — or refactor instead</td></tr>
+      <tr><td>No magic values</td><td>Named constants, enums, sealed types</td></tr>
+      <tr><td>Exceptions</td><td>Specific catches, fail fast, centralize in Spring</td></tr>
+      <tr><td>Streams</td><td>Readable over clever; extract complex predicates</td></tr>
+      <tr><td>Testing</td><td>Untested code isn't clean; AAA pattern; parameterized tests</td></tr>
+      <tr><td>YAGNI</td><td>Extract abstractions at three cases, not one</td></tr>
+      <tr><td>DI &amp; composition</td><td>Constructor injection; interfaces over inheritance</td></tr>
+      <tr><td>Refactor</td><td>Continuously, but only with test coverage</td></tr>
+      <tr><td>Modern Java</td><td>Records, sealed classes, pattern matching, text blocks</td></tr>
+      <tr><td>Immutability</td><td>Default to final, records, unmodifiable collections</td></tr>
+      <tr><td>Optional</td><td>Return types only; map/flatMap/orElseThrow</td></tr>
+      <tr><td>Logging</td><td>SLF4J + MDC, never System.out</td></tr>
+      <tr><td>Null safety</td><td>@NonNull, empty collections, validate at boundaries</td></tr>
+    </tbody>
+  </table>
+
+</div>
+</body>
+</html>
