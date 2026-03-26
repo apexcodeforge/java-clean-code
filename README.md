@@ -70,8 +70,8 @@ private static final int MAX_RETRY_COUNT = 3;
 private static final String DEFAULT_CURRENCY = "USD";
 
 // Packages — all lowercase, no underscores
-// com.helcik.invoice.service
-// com.helcik.trade.execution
+// com.example.invoice.service
+// com.example.trade.execution
 
 // Enums — PascalCase type, SCREAMING_SNAKE_CASE values
 public enum OrderStatus {
@@ -173,7 +173,7 @@ if (user.isEligibleForDiscount()) {
 // Create a new user
 User user = new User();
 // Set the name
-user.setName("Arek");
+user.setName("Tom");
 // Save the user
 userRepository.save(user);
 ```

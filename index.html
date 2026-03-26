@@ -485,6 +485,17 @@
 }</code></pre>
   </div>
 
+  <div class="code-block">
+    <div class="code-header"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span>Java</div>
+    <pre><code><span class="cmt">// Bad — narrates the obvious</span>
+<span class="cmt">// Create a new user</span>
+<span class="tp">User</span> user = <span class="kw">new</span> <span class="tp">User</span>();
+<span class="cmt">// Set the name</span>
+user.<span class="fn">setName</span>(<span class="str">"Tom"</span>);
+<span class="cmt">// Save the user</span>
+userRepository.<span class="fn">save</span>(user);</code></pre>
+  </div>
+
   <h3>Comments that ARE valuable — explaining <em>why</em></h3>
   <div class="code-block">
     <div class="code-header"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span>Java — Business context</div>
@@ -661,6 +672,17 @@
   <div class="divider"></div>
   <h2 id="s8"><span class="num">08</span>Simplicity Over Cleverness (YAGNI)</h2>
   <p>Don't build abstractions you don't need yet. Extract an abstraction when you have <strong>three</strong> concrete cases, not before.</p>
+  <div class="code-block">
+    <div class="code-header"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span>Java</div>
+    <pre><code><span class="cmt">// Over-engineered — nobody needs this</span>
+<span class="tp">Function</span>&lt;<span class="tp">Double</span>, <span class="tp">Function</span>&lt;<span class="tp">Integer</span>, <span class="tp">Double</span>&gt;&gt; calculate = p -> q -> p * q;
+
+<span class="cmt">// Just write this</span>
+<span class="kw">public double</span> <span class="fn">computeOrderAmount</span>(<span class="kw">double</span> price, <span class="kw">int</span> quantity) {
+    <span class="kw">return</span> price * quantity;
+}</code></pre>
+  </div>
+  <h3>More realistic over-engineering to avoid</h3>
   <ul>
     <li>Creating <code>AbstractDiscountStrategyFactory</code> when you have one discount type</li>
     <li>Building a plugin system when you have two implementations</li>
@@ -693,7 +715,14 @@
 
   <h3>Composition over inheritance</h3>
   <div class="code-block">
-    <div class="code-header"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span>Java</div>
+    <div class="code-header"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span>Java — Fragile inheritance</div>
+    <pre><code><span class="cmt">// Fragile inheritance hierarchy</span>
+<span class="kw">class</span> <span class="tp">Animal</span> { }
+<span class="kw">class</span> <span class="tp">FlyingAnimal</span> <span class="kw">extends</span> <span class="tp">Animal</span> { <span class="kw">void</span> <span class="fn">fly</span>() { } }
+<span class="kw">class</span> <span class="tp">SwimmingFlyingAnimal</span> <span class="kw">extends</span> <span class="tp">FlyingAnimal</span> { <span class="kw">void</span> <span class="fn">swim</span>() { } } <span class="cmt">// uh oh</span></code></pre>
+  </div>
+  <div class="code-block">
+    <div class="code-header"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span>Java — Composition via interfaces</div>
     <pre><code><span class="kw">interface</span> <span class="tp">Flyer</span> { <span class="kw">default void</span> <span class="fn">fly</span>() { <span class="cmt">/* ... */</span> } }
 <span class="kw">interface</span> <span class="tp">Swimmer</span> { <span class="kw">default void</span> <span class="fn">swim</span>() { <span class="cmt">/* ... */</span> } }
 
@@ -772,6 +801,17 @@
       AND status = 'COMPLETED'
     ORDER BY executed_at DESC
     """</span>;</code></pre>
+  </div>
+
+  <h3><code>var</code> for Local Type Inference (Java 10+)</h3>
+  <div class="code-block">
+    <div class="code-header"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span>Java 10+</div>
+    <pre><code><span class="cmt">// Good — type is obvious from the right side</span>
+<span class="kw">var</span> users = userRepository.<span class="fn">findAllActive</span>();
+<span class="kw">var</span> mapper = <span class="kw">new</span> <span class="tp">ObjectMapper</span>();
+
+<span class="cmt">// Bad — type is not obvious, use explicit type</span>
+<span class="kw">var</span> result = service.<span class="fn">process</span>(data); <span class="cmt">// What type is result?</span></code></pre>
   </div>
 
   <!-- 12 -->

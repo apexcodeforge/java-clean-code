@@ -1,9 +1,0 @@
-{
-  "permissions": {
-    "allow": [
-      "Read(//c/Program Files/Google/Chrome/Application/**)",
-      "Read(//c/Program Files \\(x86\\)/Google/Chrome/Application/**)",
-      "Bash(\"/c/Program Files/Google/Chrome/Application/chrome.exe\":*)"
-    ]
-  }
-}
