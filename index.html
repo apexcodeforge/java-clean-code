@@ -175,7 +175,7 @@
     font-family: 'JetBrains Mono', monospace;
     font-size: 13px;
     background: var(--bg-code);
-    border: 1px solid var(--border);
+    border: 0px solid var(--border);
     padding: 2px 7px;
     border-radius: 4px;
     color: var(--accent-bright);
@@ -287,6 +287,21 @@
     margin-right: 10px;
   }
 
+  @media print {
+    @page { margin: 0; }
+    body { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    .page { padding: 40px 40px; max-width: 100%; }
+    .hero { page-break-after: always; }
+    .divider { display: none; }
+    h2 { page-break-before: always; margin-top: 24px; padding-top: 0; }
+    h2:first-of-type { page-break-before: avoid; }
+    .toc { page-break-after: always; }
+    pre, .code-block { page-break-inside: avoid; }
+    .callout { page-break-inside: avoid; }
+    h3 { page-break-before: avoid; }
+    h3.pb { page-break-before: always; }
+  }
+
   @media (max-width: 700px) {
     .page { padding: 48px 20px 80px; }
     .hero h1 { font-size: 32px; }
@@ -358,7 +373,7 @@
 <span class="kw">boolean</span> canRetry;</code></pre>
   </div>
 
-  <h3>Avoid abbreviations unless universally understood</h3>
+  <h3 class="pb">Avoid abbreviations unless universally understood</h3>
   <div class="code-block">
     <div class="code-header"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span>Java</div>
     <pre><code><span class="cmt">// Bad</span>
@@ -370,7 +385,7 @@
 <span class="tp">String</span> transactionId;</code></pre>
   </div>
 
-  <h3>Java naming conventions (camelCase &amp; friends)</h3>
+  <h3 class="pb">Java naming conventions (camelCase &amp; friends)</h3>
   <p>Java has well-established casing rules. Breaking them confuses every developer who reads your code and breaks IDE tooling.</p>
   <div class="code-block">
     <div class="code-header"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span>Java — Naming Conventions</div>
@@ -390,8 +405,8 @@
 <span class="kw">private static final</span> <span class="tp">String</span> DEFAULT_CURRENCY = <span class="str">"USD"</span>;
 
 <span class="cmt">// Packages — all lowercase, no underscores</span>
-<span class="cmt">// com.helcik.invoice.service</span>
-<span class="cmt">// com.helcik.trade.execution</span>
+<span class="cmt">// com.example.invoice.service</span>
+<span class="cmt">// com.example.trade.execution</span>
 
 <span class="cmt">// Enums — PascalCase type, SCREAMING_SNAKE_CASE values</span>
 <span class="kw">public enum</span> <span class="tp">OrderStatus</span> {
